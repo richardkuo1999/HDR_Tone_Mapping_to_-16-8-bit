@@ -1,61 +1,66 @@
 import os
 import numpy as np
 import cv2
-# from utils.util import extend_upsample_downsample, draw_hist_cdf
-from matplotlib import pyplot as plt
-
-input_path = './data/hdr/'
-save_path = './result/'
+from tqdm import tqdm
+from utils.util import histogram_data, loadHdr, tonemapping
 
 
-def load_data(input_path, save_pat):
+dataset = 'HDR-Eye'
+input_path = f'./dataset/{dataset}/'
+save_path = f'./result/{dataset}/'
+draw_histogram_image = True
+GT_to_bit = '16bit'
 
-    # Input color image
-    # print("[INFO] Reading and converting image......")
-    IN_img = cv2.imread(input_path, cv2.IMREAD_ANYDEPTH)  # uint8
-    # GT_img = cv2.imread(
-    #     grounp_true_path, cv2.IMREAD_UNCHANGED)  # uint16
-    print(IN_img.max())
-    # img = cv2.imread("gt.hdr", cv2.IMREAD_ANYDEPTH)
-    dynamic_range = 70000
-    hist, bins = np.histogram(
-        IN_img.flatten(), dynamic_range, [0, dynamic_range])
-    #hist = scipy.signal.savgol_filter(hist,33, 3) #平滑化 ###
-    cdf = hist.cumsum()
-    cdf_normalized = cdf * float(hist.max()) / cdf.max()
-    fig = plt.figure()
-    plt.plot(cdf_normalized, color='b')
-    # plt.bar(range(0, dynamic_range), hist, color='r', width=1)
-    plt.plot(range(0, dynamic_range), hist, marker='o', markersize=0.00001)
-    plt.xlim([0, dynamic_range])
-    plt.ylim([0, hist.max()+hist.max()*0.1])
-    plt.legend(('cdf', 'histogram'), loc='upper left')
-    fig.savefig((save_pat+".png"), dpi=fig.dpi)
-    plt.close()
-    np.savetxt(save_pat+".txt", hist, fmt='%d', newline=' ')
+os.mkdir
 
 
-def loadHdr(imName):
-    img = cv2.imread(imName, flags=cv2.IMREAD_ANYDEPTH)
+def get_histogram_data(image_path, result_save_path, bit, draw_histogram_image):
+    if bit == '8bit':
+        dynamic_range = 255
+    elif bit == '16bit':
+        dynamic_range = 65536
 
-    tonemapDurand = cv2.createTonemapReinhard(2.2, 0, 0, 0)
-
-    ldrDurand = tonemapDurand.process(img)
-
-    im2_16bit = np.clip(ldrDurand * 65536, 0, 65536).astype('uint16')
-    # 255 65536 4294967296
-    return im2_16bit
+    histogram_data(image_path, result_save_path,
+                   dynamic_range, draw_histogram_image)
 
 
 if __name__ == '__main__':
-    # 要改rgb_mode,txt的路徑(2+1)
-    # rgb_mode = 2 #改
 
-    for i in os.listdir(input_path):
-        print(i)
+    if not os.path.isdir(save_path):
+        os.makedirs(save_path)
 
-        imBatch = loadHdr(input_path+i)
-        cv2.imwrite(save_path+"image/"+i[:-4] + ".png", imBatch)
+    # Input data
+    print('Input')
 
-        load_data(save_path+"image/"+i[:-4] +
-                  ".png", save_path+"result/"+i[:-4])
+    data_path = input_path+dataset+'-input/'
+    result_save_path = save_path+dataset+'-input/'
+
+    if not os.path.isdir(result_save_path):
+        os.makedirs(result_save_path)
+
+    for filename in tqdm(os.listdir(data_path)):
+
+        image_path = data_path + filename
+        result_save_name = result_save_path+filename[:-4]
+        get_histogram_data(image_path, result_save_name,
+                           '8bit', draw_histogram_image)
+
+    print('GT')
+
+    data_path = input_path+dataset+'-gt/'
+    result_save_path = save_path+dataset+'-gt/'
+
+    if not os.path.isdir(result_save_path):
+        os.makedirs(result_save_path)
+
+    for filename in tqdm(os.listdir(data_path)):
+        image_path = data_path + filename
+        result_save_name = result_save_path+filename[:-4]
+
+        get_histogram_data(image_path, result_save_name,
+                           '8bit', draw_histogram_image)
+        #         imBatch = loadHdr(input_path+i)
+        #         cv2.imwrite(save_path+"image/"+i[:-4] + ".png", imBatch)
+
+        #         load_data(save_path+"image/"+i[:-4] +
+        #                   ".png", save_path+"result/"+i[:-4])
