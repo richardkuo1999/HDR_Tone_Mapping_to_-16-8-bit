@@ -59,3 +59,10 @@ def tonemapping(imName, GT_to_bit, method='Reinhard'):
     im2 = np.clip(ldr * dynamic_range, 0, dynamic_range).astype(astype)
     # 255 65536 4294967296
     return im2
+
+
+def get_histogram_data(image_path, result_save_path, bit, draw_histogram_image):
+
+    dynamic_range, _ = get_dynamic_range(bit)
+    histogram_data(image_path, result_save_path,
+                   dynamic_range, draw_histogram_image)
