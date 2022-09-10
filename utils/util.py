@@ -45,7 +45,7 @@ def tonemapping(imName, GT_to_bit, method='Reinhard'):
     img = cv2.imread(imName, flags=cv2.IMREAD_ANYDEPTH)
 
     if method == 'Reinhard':
-        tonemap = cv2.createTonemapReinhard(1.5, 0, 0, 0)
+        tonemap = cv2.createTonemapReinhard(2.2, 0, 0, 0)
     elif method == 'Drago':
         tonemap = cv2.createTonemapDrago(1.0, 0.7)
     elif method == 'Durand':
@@ -54,7 +54,6 @@ def tonemapping(imName, GT_to_bit, method='Reinhard'):
         tonemap = cv2.createTonemapMantiuk(2.2, 0.85, 1.2)
     else:
         print("Please enter the tonemapping method!")
-
     ldr = tonemap.process(img)
     im2 = np.clip(ldr * dynamic_range, 0, dynamic_range).astype(astype)
     # 255 65536 4294967296

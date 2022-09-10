@@ -10,7 +10,8 @@ parser = argparse.ArgumentParser()
 train_set = parser.add_mutually_exclusive_group()
 
 # _/_/_/ what to do _/_/_/
-parser.add_argument('--dataset', default='HDR-Eye',
+parser.add_argument('--dataset', default='RAISE',
+                    choices=['HDR-Eye', 'HDR-Real', 'HDR-Synth', 'RAISE'],
                     help='dataset file name',
                     type=str)
 parser.add_argument('--input_path', default=f'./dataset/',
@@ -22,7 +23,7 @@ parser.add_argument('--save_path', default=f'./result/',
 parser.add_argument('--draw_histogram_image', default=True,
                     help='whether draw histogram image',
                     type=bool)
-parser.add_argument('--GT_to_bit', default='8bit',
+parser.add_argument('--GT_to_bit', default='16bit',
                     choices=['8bit,16bit'],
                     help='GT to what bit 8bit or 16bit',
                     type=str)
