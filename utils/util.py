@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 
 def get_dynamic_range(bit):
     if bit == '8bit':
-        dynamic_range = 255
+        dynamic_range = 256
         astype = 'uint8'
     elif bit == '16bit':
         dynamic_range = 65536
@@ -56,7 +56,7 @@ def tonemapping(imName, GT_to_bit, method='Reinhard'):
         print("Please enter the tonemapping method!")
     ldr = tonemap.process(img)
     im2 = np.clip(ldr * dynamic_range, 0, dynamic_range).astype(astype)
-    # 255 65536 4294967296
+    # 256 65536 4294967296
     return im2
 
 

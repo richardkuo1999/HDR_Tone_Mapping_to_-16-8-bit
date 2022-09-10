@@ -10,7 +10,7 @@ parser = argparse.ArgumentParser()
 train_set = parser.add_mutually_exclusive_group()
 
 # _/_/_/ what to do _/_/_/
-parser.add_argument('--dataset', default='RAISE',
+parser.add_argument('--dataset', default='HDR-Real',
                     choices=['HDR-Eye', 'HDR-Real', 'HDR-Synth', 'RAISE'],
                     help='dataset file name',
                     type=str)
